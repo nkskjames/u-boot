@@ -92,10 +92,10 @@
 #define CONFIG_CMDLINE_TAG	 1		/* enable passing of ATAGs	*/
 #define CONFIG_SETUP_MEMORY_TAGS 1
 #define CONFIG_INITRD_TAG	 1
-#define	CONFIG_BOOTARGS 	"console=ttyS4,38400n8 root=/dev/ram rw"
+#define	CONFIG_BOOTARGS 	"console=ttyS4,38400n8 panic=30"
 #define CONFIG_UPDATE           "tftp 40800000 ast2400.scr; so 40800000'"
 
-#define CONFIG_BOOTDELAY	3		/* autoboot after 3 seconds	*/
+#define CONFIG_BOOTDELAY	10		/* autoboot after 3 seconds	*/
 #define CONFIG_AUTOBOOT_KEYED
 #define CONFIG_AUTOBOOT_PROMPT		\
 	"autoboot in %d seconds (stop with 'Delete' key)...\n", bootdelay
