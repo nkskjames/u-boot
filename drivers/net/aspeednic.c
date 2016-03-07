@@ -411,9 +411,11 @@ static int   aspeednic_init(struct eth_device* dev, bd_t* bis);
 static int   aspeednic_send(struct eth_device* dev, volatile void *packet, int length);
 static int   aspeednic_recv(struct eth_device* dev);
 static void  aspeednic_halt(struct eth_device* dev);
+static int   aspeednic_set_hwaddr(struct eth_device* dev);
 static void  set_mac_address (struct eth_device* dev, bd_t* bis);
 static void  phy_write_register (struct eth_device* dev, u8 PHY_Register, u8 PHY_Address, u16 PHY_Data);
 static u16   phy_read_register (struct eth_device* dev, u8 PHY_Register, u8 PHY_Address);
+static void aspeednic_probe_phy(struct eth_device *dev);
 #if defined(CONFIG_MII) || defined(CONFIG_CMD_MII)
 static int faraday_mdio_read(const char *devname, uint8_t addr, uint8_t reg,
                              uint16_t *value);
@@ -564,6 +566,7 @@ int aspeednic_initialize(bd_t *bis)
   dev->halt   = aspeednic_halt;
   dev->send   = aspeednic_send;
   dev->recv   = aspeednic_recv;
+  //dev->write_hwaddr = aspeednic_set_hwaddr;
 
   /* Ensure we're not sleeping. */
   if (CONFIG_ASPEED_MAC_PHY_SETTING >= 1) {
@@ -572,9 +575,11 @@ int aspeednic_initialize(bd_t *bis)
   else {
     udelay(10 * 1000);
   }
-
-  dev->init(dev, bis);
-
+  RESET_DE4X5(dev);
+  aspeednic_probe_phy(dev);
+  set_mac_address (dev, NULL);
+  set_mac_control_register (dev);
+ 
   eth_register(dev);
 
 #if defined(CONFIG_MII) || defined(CONFIG_CMD_MII)
@@ -1032,6 +1037,7 @@ void Enable_Channel (struct eth_device* dev)
 void Disable_Channel (struct eth_device* dev)
 {
   unsigned long Combined_Channel_ID;
+  printf("Disable Channel---------------------\n");
 //TX
   do {
     InstanceID++;
@@ -1125,6 +1131,7 @@ void Set_Link (struct eth_device* dev)
   } while ((Retry != 0) && (Retry <= RETRY_COUNT));
   Retry = 0;
 }
+
 
 static void aspeednic_probe_phy(struct eth_device *dev)
 {
@@ -1359,7 +1366,20 @@ static int aspeednic_recv(struct eth_device* dev)
 
 static void aspeednic_halt(struct eth_device* dev)
 {
+  printf("NIC HALT ------------------------------\n");
   STOP_MAC(dev);
+}
+
+static int aspeednic_set_hwaddr(struct eth_device* dev)
+{
+  printf("\naspeednic_set_hwaddr\n");
+  //RESET_DE4X5(dev);
+  printf("probe\n");
+  //aspeednic_probe_phy(dev);
+  printf("mac_ctrl\n");
+  //set_mac_control_register (dev);
+  printf("return\n");
+  return 0;
 }
 
 static void set_mac_address (struct eth_device* dev, bd_t* bis)

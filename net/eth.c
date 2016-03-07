@@ -216,12 +216,13 @@ int eth_write_hwaddr(struct eth_device *dev, const char *base_name,
 		printf("\nWarning: %s using MAC address from net device\n",
 			dev->name);
 	}
-
+	printf("here\n");
 	if (dev->write_hwaddr &&
 			!eth_mac_skip(eth_number)) {
+		printf("addr: %pM\n",dev->enetaddr);
 		if (!is_valid_ether_addr(dev->enetaddr))
 			return -1;
-
+		printf("here2\n");
 		ret = dev->write_hwaddr(dev);
 	}
 
